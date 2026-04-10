@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- this file is a file -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="EZCRYPT Information">
+    <title>EZCRYPT Information</title>
+    <style>
+        /* default -> light mode */
+        body {
+            background-color: white;
+            color: black;
+        }
+
+        /* if user prefers dark mode */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1b1b1b;
+                color: #e0e0e0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>EZCRYPT Information</h1>
+    <section> <!-- summary -->
+        <p>
+            "EZCRYPT" - A <abbr title=">90 semicolons of C!">tiny</abbr> CLI tool for password authenticated encryption/decryption<br>
+            of files using libsodium; written in <abbr title="C99 + POSIX.1-2008">pure C.</abbr><br>
+            It's <abbr title="Free and Open Source Software; BSD-3-Clause license">FOSS</abbr>
+        </p><p>
+            <h3>Features:</h3>
+
+            - Encrypt files with a password (`enc`).<br>
+            - Decrypt files with the same password (`dec`).<br>
+            - Derives a strong key from the password with `<code>crypto_pwhash()</code>` and a random salt.<br>
+            - Uses `<code>crypto_aead_xchacha20poly1305_ietf()</code>` for authenticated encryption.<br>
+            - Password always read from stdin (echo disabled for security).<br>
+            - Output piped to stdout for use with shell redirection and pipes.<br>
+
+        </p>
+    </section> <!-- summary -->
+    <section> <!-- getting -->
+        <p>
+            <h3>Building/Istalling:</h3>
+            Only prerequisites are: C compiler, libsodium (present in linker search path)<br>
+            To build, just `make [release]`.<br>
+        </p><p>
+            <h3>usage:</h3>
+            <p>Password is read from stdin and output goes to stdout:</p>
+            <pre>
+# Encrypt
+./ezcrypt -e file.txt > file.enc
+
+# Decrypt
+./ezcrypt -d file.enc > file.txt
+            </pre>
+
+            <h3>Details:</h3>
+            - Passwords are converted to keys via <code>crypto_pwhash</code> (interactive limits).<br>
+            - Nonce and salt are stored in output (unencrypted header).<br>
+            - Tampered ciphertext or wrong password fails decryption.<br>
+
+        </p>
+    </section> <!-- getting -->
+</body>
+</html>
