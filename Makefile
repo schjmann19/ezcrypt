@@ -1,9 +1,8 @@
-# Makefile for ezcrypt - supports Linux and Windows cross-compilation
+# Makefile for ezcrypt - supports native builds
 # Usage:
-#   make                  # Build for Linux (default)
-#   make windows          # Cross-compile for Windows from Linux
-#   make release          # Release build for Linux
-#   make windows-release  # Release build for Windows
+#   make                  # Build for native platform (Linux or macOS)
+#   make release          # Release build for native platform
+#   make install          # Install the built program
 #   make clean            # Clean build artifacts
 
 # --- Target Platform Detection ---
@@ -56,6 +55,9 @@ LIBS = -lsodium
 SRC_DIR = src
 OBJ_DIR = obj/$(PLATFORM)
 BIN_DIR = bin
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+DESTDIR ?=
 
 SRCS = $(SRC_DIR)/main.c $(SRC_DIR)/crypto.c
 OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/crypto.o
@@ -63,23 +65,14 @@ OBJS = $(OBJ_DIR)/main.o $(OBJ_DIR)/crypto.o
 # --- Targets ---
 all: $(TARGET_EXE)
 
-# Build for Windows
-obj/windows/%.o: $(SRC_DIR)/%.c
-	@mkdir -p obj/windows
-	x86_64-w64-mingw32-gcc $(CFLAGS_BASE) -I/usr/x86_64-w64-mingw32/include -c $< -o $@
-
-.PHONY: windows
-windows: obj/windows/main.o obj/windows/crypto.o
-	x86_64-w64-mingw32-gcc obj/windows/main.o obj/windows/crypto.o -o ezcrpyt.exe -L/usr/x86_64-w64-mingw32/lib -static-libgcc -lsodium
-
-.PHONY: windows-release
-windows-release: obj/windows/main.o obj/windows/crypto.o
-	x86_64-w64-mingw32-gcc obj/windows/main.o obj/windows/crypto.o -o ezcrpyt.exe -L/usr/x86_64-w64-mingw32/lib -static-libgcc -s -lsodium
-
 # Release build for current platform
 release: CFLAGS = $(CFLAGS_BASE) $(CFLAGS_PLATFORM) -O3 -flto -march=native -mtune=native -DNDEBUG
 release: LDFLAGS = $(LDFLAGS_BASE) $(LDFLAGS_PLATFORM) -flto -s
 release: clean $(TARGET_EXE)
+
+install: $(TARGET_EXE)
+	@mkdir -p $(DESTDIR)$(BINDIR)
+	install -m 755 $(TARGET_EXE) $(DESTDIR)$(BINDIR)/$(TARGET_EXE)
 
 # Link
 $(TARGET_EXE): $(OBJS)
@@ -94,4 +87,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf obj/ *.exe ezcrpyt
 
-.PHONY: all clean release windows windows-release
+.PHONY: all clean release install
