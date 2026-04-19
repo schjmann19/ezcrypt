@@ -23,14 +23,14 @@ endif
 # --- Compiler Selection ---
 ifeq ($(PLATFORM),windows)
     CC = x86_64-w64-mingw32-gcc
-    TARGET_EXE = ezcrpyt.exe
+    TARGET_EXE = ezcrypt.exe
     LDFLAGS_PLATFORM = -static-libgcc
     MINGW_PREFIX = /usr/x86_64-w64-mingw32
     CFLAGS_PLATFORM = -I$(MINGW_PREFIX)/include
     LDFLAGS_PLATFORM += -L$(MINGW_PREFIX)/lib
 else
     CC = cc # tested on gcc and clang
-    TARGET_EXE = ezcrpyt
+    TARGET_EXE = ezcrypt
     LDFLAGS_PLATFORM =
     CFLAGS_PLATFORM = -D_POSIX_C_SOURCE=200809L
 endif
@@ -85,6 +85,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf obj/ *.exe ezcrpyt
+	rm -rf obj/ *.exe ezcrypt
 
 .PHONY: all clean release install
